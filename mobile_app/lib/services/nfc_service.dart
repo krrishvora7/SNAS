@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
-// import 'dart:typed_data'; // Uncomment if needed
 
 import 'package:nfc_manager/nfc_manager.dart';
-import 'package:nfc_manager_ndef/nfc_manager_ndef.dart';
+import 'package:nfc_manager_ndef/nfc_manager_ndef.dart' show Ndef, NdefMessage, NdefRecord;
 
 /// Service for handling NFC tag reading operations
 class NFCService {
@@ -26,7 +25,7 @@ class NFCService {
 
     try {
       await NfcManager.instance.startSession(
-        // NEW: Polling options are required in v4.0+
+        // Polling options required in v4.0+
         pollingOptions: {
           NfcPollingOption.iso14443,
           NfcPollingOption.iso15693,
@@ -44,7 +43,7 @@ class NFCService {
               completer.complete(payload);
             }
           } catch (e) {
-            // NEW: 'errorMessage' was renamed to 'errorMessageIos'
+            // 'errorMessage' was renamed to 'errorMessageIos' in v4.0+
             await NfcManager.instance.stopSession(errorMessageIos: e.toString());
 
             // Return the error via the completer
@@ -78,29 +77,37 @@ class NFCService {
 
     for (final record in cachedMessage.records) {
       try {
-        // NEW: Capital 'K' in nfcWellKnown and required import
-        if (record.typeNameFormat == NdefTypeNameFormat.nfcWellKnown) {
+        // FIX: Compare using the raw index value instead of NdefTypeNameFormat enum.
+        // nfcWellKnown = 1 in the NdefTypeNameFormat enum across all versions.
+        // This avoids the "getter 'NdefTypeNameFormat' isn't defined" compile error.
+        if (record.typeNameFormat.index == 1) {
           final type = String.fromCharCodes(record.type);
 
+          // 'T' = Text record type in NDEF Well Known format
           if (type == 'T') {
             final payload = record.payload;
             if (payload.isEmpty) continue;
 
+            // First byte is the status byte:
+            // bits 0-5 = language code length
+            // bit 7    = encoding (0=UTF-8, 1=UTF-16)
             final statusByte = payload[0];
             final languageCodeLength = statusByte & 0x3F;
             final textStartIndex = 1 + languageCodeLength;
-            
+
             if (payload.length <= textStartIndex) continue;
 
             final textBytes = payload.sublist(textStartIndex);
             final text = utf8.decode(textBytes);
 
+            // Only return if the payload looks like a JSON object
             if (text.trim().startsWith('{') && text.trim().endsWith('}')) {
               return text.trim();
             }
           }
         }
       } catch (e) {
+        // Skip malformed records and try the next one
         continue;
       }
     }
@@ -117,6 +124,7 @@ class NFCService {
 class NFCException implements Exception {
   final String message;
   NFCException(this.message);
+
   @override
   String toString() => 'NFCException: $message';
 }
