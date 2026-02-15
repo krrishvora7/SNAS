@@ -282,7 +282,7 @@ The implementation prioritizes server-side validation and security, ensuring tha
     - Test rejection scenarios (outside geofence, invalid token)
     - _Requirements: 1.1, 3.1, 4.1, 5.1, 6.2, 7.1_
 
-- [~] 11. Checkpoint - Test mobile app functionality
+- [ ] 11. Checkpoint - Test mobile app functionality
   - Test complete attendance flow with real NFC tags
   - Verify GPS capture and geofence validation
   - Test error handling for various failure scenarios
@@ -290,13 +290,13 @@ The implementation prioritizes server-side validation and security, ensuring tha
   - Ensure all tests pass, ask the user if questions arise
 
 - [ ] 12. Implement admin dashboard backend queries
-  - [~] 12.1 Create SQL view for dashboard data
+  - [ ] 12.1 Create SQL view for dashboard data
     - Create view joining attendance_logs, profiles, and classrooms
     - Include all required fields: student name, classroom name, building, timestamp, status, coordinates
     - Add indexes for performance
     - _Requirements: 8.2_
   
-  - [~] 12.2 Create RPC function for filtered attendance query
+  - [ ] 12.2 Create RPC function for filtered attendance query
     - Implement function with parameters: start_date, end_date, classroom_id, status
     - Apply filters to attendance query
     - Return JSON array of attendance records
@@ -408,7 +408,7 @@ The implementation prioritizes server-side validation and security, ensuring tha
     - Implement offline support for attendance history
     - _Requirements: 13.3_
 
-- [~] 17. Final checkpoint and integration testing
+- [ ] 17. Final checkpoint and integration testing
   - Run all unit tests and property tests
   - Perform end-to-end testing of complete system
   - Test with multiple concurrent users

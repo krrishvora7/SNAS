@@ -12,6 +12,7 @@
         "geolocator",
         "intl",
         "nfc_manager",
+        "nfc_manager_ndef",
         "shared_preferences",
         "supabase_flutter"
       ],
@@ -80,10 +81,19 @@
       ]
     },
     {
-      "name": "nfc_manager",
-      "version": "3.5.0",
+      "name": "nfc_manager_ndef",
+      "version": "1.1.0",
       "dependencies": [
-        "flutter"
+        "flutter",
+        "nfc_manager"
+      ]
+    },
+    {
+      "name": "nfc_manager",
+      "version": "4.1.1",
+      "dependencies": [
+        "flutter",
+        "ndef_record"
       ]
     },
     {
@@ -323,6 +333,13 @@
       ]
     },
     {
+      "name": "ndef_record",
+      "version": "1.4.1",
+      "dependencies": [
+        "collection"
+      ]
+    },
+    {
       "name": "win32_registry",
       "version": "1.1.5",
       "dependencies": [
@@ -354,7 +371,7 @@
     },
     {
       "name": "ffi",
-      "version": "2.1.5",
+      "version": "2.2.0",
       "dependencies": []
     },
     {
@@ -626,7 +643,7 @@
     },
     {
       "name": "url_launcher_ios",
-      "version": "6.3.6",
+      "version": "6.4.1",
       "dependencies": [
         "flutter",
         "url_launcher_platform_interface"
