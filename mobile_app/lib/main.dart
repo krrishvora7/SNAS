@@ -6,10 +6,11 @@ import 'screens/home_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Supabase.initialize(
-    url: const String.fromEnvironment('SUPABASE_URL'),
-    anonKey: const String.fromEnvironment('SUPABASE_ANON_KEY'),
+await Supabase.initialize(
+    url: 'https://laqcdxrupswdgfqcfbpz.supabase.co',   // 👈 paste your URL here
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhcWNkeHJ1cHN3ZGdmcWNmYnB6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzExNDM0MDcsImV4cCI6MjA4NjcxOTQwN30.KmMlhre2lefz1HLx1Sqv-0YWpsdfig1KesGdCuh44lA',                 // 👈 paste your anon key here
   );
+
 
   runApp(const SNASApp());
 }

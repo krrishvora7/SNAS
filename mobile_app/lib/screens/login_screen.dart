@@ -31,6 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
+    // Safe: widget is definitely mounted here (user just tapped the button)
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -43,6 +44,10 @@ class _LoginScreenState extends State<LoginScreen> {
         _passwordController.text,
       );
 
+      // ✅ GUARD: After every await, the widget may have been disposed.
+      // The AuthGate stream can navigate away before we reach this line.
+      if (!mounted) return;
+
       if (!authResult.success) {
         setState(() {
           _errorMessage = authResult.errorMessage;
@@ -54,9 +59,16 @@ class _LoginScreenState extends State<LoginScreen> {
       // Step 2: Check and enforce device binding
       final bindingResult = await _deviceBindingService.checkAndBindDevice();
 
+      // ✅ GUARD: Check again after second await
+      if (!mounted) return;
+
       if (!bindingResult.success) {
-        // Device binding failed - sign out and show error
+        // Device binding failed — sign out and show error
         await _authService.signOut();
+
+        // ✅ GUARD: Check after signOut await too
+        if (!mounted) return;
+
         setState(() {
           _errorMessage = bindingResult.errorMessage;
           _isLoading = false;
@@ -64,11 +76,18 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
 
-      // Success - navigation handled by AuthGate stream
-      setState(() {
-        _isLoading = false;
-      });
+      // ✅ Success — AuthGate stream handles navigation automatically.
+      // Only call setState if we're still mounted (widget hasn't been
+      // replaced by AuthGate yet).
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     } catch (e) {
+      // ✅ GUARD: Exception can be thrown after an await too
+      if (!mounted) return;
+
       setState(() {
         _errorMessage = 'An unexpected error occurred: ${e.toString()}';
         _isLoading = false;
