@@ -82,13 +82,14 @@ class _ScanningScreenState extends State<ScanningScreen> {
     }
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: true,
+      canPop: false, // 1. CRITICAL: Prevents the automatic double-pop!
       onPopInvokedWithResult: (didPop, result) {
-        // Handle back button press
-        if (didPop && widget.onCancel != null) {
+        if (didPop) return;
+        // User pressed hardware back button, trigger cancel to let HomeScreen pop it
+        if (widget.onCancel != null) {
           widget.onCancel!();
         }
       },
@@ -98,7 +99,7 @@ class _ScanningScreenState extends State<ScanningScreen> {
           leading: widget.onCancel != null
               ? IconButton(
                   icon: const Icon(Icons.close),
-                  onPressed: widget.onCancel,
+                  onPressed: widget.onCancel, // Let HomeScreen handle the pop
                   tooltip: 'Cancel',
                 )
               : null,
@@ -109,7 +110,6 @@ class _ScanningScreenState extends State<ScanningScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Animated icon based on current step
                 TweenAnimationBuilder<double>(
                   key: ValueKey(_currentStep),
                   tween: Tween(begin: 0.0, end: 1.0),
@@ -129,14 +129,8 @@ class _ScanningScreenState extends State<ScanningScreen> {
                   },
                 ),
                 const SizedBox(height: 32),
-
-                // Loading indicator
-                const CircularProgressIndicator(
-                  strokeWidth: 3,
-                ),
+                const CircularProgressIndicator(strokeWidth: 3),
                 const SizedBox(height: 24),
-
-                // Processing message based on current step
                 Text(
                   _getStepMessage(_currentStep),
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -155,11 +149,11 @@ class _ScanningScreenState extends State<ScanningScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 32),
-
-                // Cancel button (if callback provided)
+                
+                // Cancel button
                 if (widget.onCancel != null)
                   OutlinedButton(
-                    onPressed: widget.onCancel,
+                    onPressed: widget.onCancel, // Let HomeScreen handle the pop
                     child: const Text('Cancel'),
                   ),
               ],

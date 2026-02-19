@@ -148,6 +148,11 @@ class _HomeScreenState extends State<HomeScreen> {
       if (mounted) {
         navigator.pop(); // Close scanning screen
 
+        // Quietly ignore if the user intentionally canceled
+        if (e.message.contains('canceled by user')) {
+          return; 
+        }
+
         // Show error dialog with retry option
         _showErrorDialog(
           title: 'Attendance Failed',
